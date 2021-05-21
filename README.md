@@ -26,6 +26,12 @@ Octopod Platformunda geliştirme yapan geliştiricinin ihtiyaç duyabileceği s�
 
 --- 
 
+**EAN**
+
+    Verilen bir barkodu EAN barkoda çevirir. 
+
+    TODO : DOĞRU MU?
+
 **Amazon SNS ile SMS gönderimi**
 
     Bu metod arka planda bir Exe çalıştırmaktadır. Eğer SMS gönderimi için bu metodu kullanacaksanız bu Exeye ihtiyaç duyacaksınız. Exeye EMS ARGE AZURE hesabından erişilebilir. Aynı zamanda Amazon SNS hesabı da gerekmektedir.
