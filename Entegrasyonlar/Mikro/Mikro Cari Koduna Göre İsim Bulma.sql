@@ -1,0 +1,13 @@
+CREATE FUNCTION [dbo].[fn_SY_MikroCariKodunaGoreIsminiBul]		
+ (@ID NVARCHAR(36))
+RETURNS  NVARCHAR(100) AS
+BEGIN
+DECLARE @ISIM  NVARCHAR(100)
+
+
+
+Set @ISIM =(SELECT cari_unvan1 +' '+ cari_unvan2 FROM MikroDB_V16_2020_NIKEL.dbo.CARI_HESAPLAR WITH (NOLOCK) WHERE cari_Guid=@ID)
+
+IF @ISIM is NULL SET @ISIM = ''
+Return @ISIM
+END
