@@ -38,7 +38,7 @@ SET @KaynakDepo=( SELECT TOP 1 KaynakDepo FROM dbo.CY_IC_TEDARIK  WITH(NOLOCK) W
 
   SET @SorumlulukMerkezi= ( SELECT TOP 1 SorumlulukMerkeziKodu FROM dbo.CY_SANTIYE_PARAMETRELERI WITH(NOLOCK) WHERE Santiye = (SELECT TOP 1 KaynakDepo FROM dbo.CY_IC_TEDARIK WITH(NOLOCK) WHERE UserTableID=@UserTableID ))
 
-         SET @EvrakSira=(SELECT ISNULL(MAX(sth_evrakno_sira),0) + 1  FROM  MikroDB_V16_ÇÝFTAY.dbo.STOK_HAREKETLERI WITH(NOLOCK) WHERE sth_evrakno_seri='OCT')
+         SET @EvrakSira=(SELECT ISNULL(MAX(sth_evrakno_sira),0) + 1  FROM  MikroDB_V16_ï¿½ï¿½FTAY.dbo.STOK_HAREKETLERI WITH(NOLOCK) WHERE sth_evrakno_seri='OCT')
   
 SET @UniqueBosAlan=(SELECT  CAST(CAST(0 AS BINARY) AS UNIQUEIDENTIFIER))       
 BEGIN TRY
@@ -67,7 +67,7 @@ WHILE @@FETCH_STATUS = 0
 BEGIN
 
 SET @MikroGuid=NEWID()
-INSERT INTO MikroDB_V16_ÇÝFTAY.[dbo].[STOK_HAREKETLERI]
+INSERT INTO MikroDB_V16_CIFTAY.[dbo].[STOK_HAREKETLERI]
            ([sth_Guid]
            ,[sth_DBCno]
            ,[sth_SpecRECno]
@@ -258,7 +258,7 @@ INSERT INTO MikroDB_V16_ÇÝFTAY.[dbo].[STOK_HAREKETLERI]
              0,--,<sth_har_doviz_kuru, float,>
              0,--,<sth_alt_doviz_kuru, float,>
              0,--,<sth_stok_doviz_cinsi, tinyint,>
-            MikroDB_V16_ÇÝFTAY.dbo.fn_KurBul(@Tarih,0,1),--<sth_stok_doviz_kuru, float,>
+            MikroDB_V16_ï¿½ï¿½FTAY.dbo.fn_KurBul(@Tarih,0,1),--<sth_stok_doviz_kuru, float,>
              @Miktar,--,<sth_miktar, float,>
              0,--,<sth_miktar2, float,>
              0,--,<sth_birim_pntr, tinyint,>

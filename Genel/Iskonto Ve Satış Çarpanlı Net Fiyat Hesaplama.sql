@@ -1,10 +1,10 @@
-Create FUNCTION [dbo].[fn_NetFiyat_HEsaplam]
+Create FUNCTION [dbo].[fn_NetFiyat_Hesaplama]
 (
     @Miktar int,
 	@LiteFiyat float,
 	@IStTur int,
-	@Ýskonto float,
-	@SatýsCarpaný float
+	@iskonto float,
+	@SatisCarpani float
 --	@SatisTipi int
 )
 /*
@@ -21,25 +21,25 @@ declare @Sonuc decimal(8,2)
 DEclare @BirimFiyat float
 
 IF @IStTur=0
-SET @BirimFiyat=@LiteFiyat-((@LiteFiyat*@Ýskonto)/100)
+SET @BirimFiyat=@LiteFiyat-((@LiteFiyat*@iskonto)/100)
 ELSE IF  @IStTur=1
 BEGIN
-SET @BirimFiyat=@LiteFiyat-@Ýskonto
+SET @BirimFiyat=@LiteFiyat-@iskonto
 END
 
-Declare @SatýsFiyat float
-IF @SatýsCarpaný=0 
-SET @SatýsFiyat=@BirimFiyat
+Declare @SatisFiyat float
+IF @SatisCarpani=0 
+SET @SatisFiyat=@BirimFiyat
 ELSE 
 BEGIN
-SET @SatýsFiyat=@BirimFiyat*@SatýsCarpaný
+SET @SatisFiyat=@BirimFiyat*@SatisCarpanï¿½
 end
 
 IF @Miktar=0
-SET @Sonuc=@SatýsFiyat
+SET @Sonuc=@SatisFiyat
 else 
 begin
-SET @Sonuc=(SeLECT @SatýsFiyat *@Miktar)
+SET @Sonuc=(SeLECT @SatisFiyat *@Miktar)
 end
     RETURN @Sonuc
 END
