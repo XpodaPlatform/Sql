@@ -1,0 +1,57 @@
+ALTER PROCEDURE [dbo].[sp_XP_MCM_StoklarinAylikMaliyetleri] 
+	@Firma NVARCHAR(1)=0
+	,@DovizTipi NVARCHAR(1)=2
+	,@StokKodu NVARCHAR(50)=''
+AS
+
+--PIVOT Sorgumuz
+
+DECLARE @Aylar NVARCHAR(MAX)='['
+		,@PivotAylar NVARCHAR(MAX)='ISNULL(['
+
+SELECT @Aylar+=CONCAT(AyAdi,'-',YEAR(EnvanterTarihi),'],[') 
+		,@PivotAylar+=CONCAT(AyAdi,'-',YEAR(EnvanterTarihi),'],0.0) AS [',AyAdi,'-',YEAR(EnvanterTarihi),'],ISNULL([') 
+FROM MCM_STOK_ENVANTER_DATA WITH(NOLOCK) 
+LEFT JOIN [dbo].[vw_XP_Aylar] ON ID=month(EnvanterTarihi) 
+WHERE Firma=@Firma GROUP BY EnvanterTarihi,AyAdi ORDER BY EnvanterTarihi
+
+--SELECT CONCAT(AyAdi,'-',YEAR(EnvanterTarihi),'],') FROM MCM_STOK_ENVANTER_DATA WITH(NOLOCK) LEFT JOIN [dbo].[vw_XP_Aylar] ON ID=month(EnvanterTarihi) WHERE Firma=0 GROUP BY EnvanterTarihi,AyAdi ORDER BY EnvanterTarihi
+--select @Aylar
+
+IF LEN(@Aylar)>2
+	SET @Aylar=LEFT(@Aylar,LEN(@Aylar)-2)
+	SET @PivotAylar=LEFT(@PivotAylar,LEN(@PivotAylar)-9)
+--select @Aylar
+
+DECLARE @SQL NVARCHAR(MAX)=''
+
+IF @StokKodu=''
+BEGIN
+
+SET @SQL=
+'SELECT [Stok],'+@PivotAylar+'
+FROM
+(SELECT CONCAT(sto_kod,'' - '',sto_isim) AS [Stok],CONCAT(AyAdi,''-'',YEAR(EnvanterTarihi)) AS Tarih,ISNULL(IIF('+@DovizTipi+'=2,EuroTutar,TlTutar)/IIF(Miktar=0,1,Miktar),0.0) AS [Euro Birim Değer] FROM MCM_STOK_ENVANTER_DATA WITH(NOLOCK) LEFT JOIN MikroDB_V16_MCM.dbo.STOKLAR WITH(NOLOCK) ON sto_kod=StokKodu LEFT JOIN [dbo].[vw_XP_Aylar] ON ID=month(EnvanterTarihi) WHERE Firma='+@Firma+') AS EnvanterDegerleri
+PIVOT
+(
+    SUM([Euro Birim Değer])
+    FOR Tarih IN ('+@Aylar+')
+) AS EnvanterDegerleri_Pivot;'
+
+END
+ELSE
+BEGIN
+
+
+SET @SQL=
+'SELECT [Stok],'+@PivotAylar+'
+FROM
+(SELECT CONCAT(sto_kod,'' - '',sto_isim) AS [Stok],CONCAT(AyAdi,''-'',YEAR(EnvanterTarihi)) AS Tarih,ISNULL(IIF('+@DovizTipi+'=2,EuroTutar,TlTutar)/IIF(Miktar=0,1,Miktar),0.0) AS [Euro Birim Değer] FROM MCM_STOK_ENVANTER_DATA WITH(NOLOCK) LEFT JOIN MikroDB_V16_MCM.dbo.STOKLAR WITH(NOLOCK) ON sto_kod=StokKodu LEFT JOIN [dbo].[vw_XP_Aylar] ON ID=month(EnvanterTarihi) WHERE Firma='+@Firma+' AND StokKodu ='''+@StokKodu+''') AS EnvanterDegerleri
+PIVOT
+(
+    SUM([Euro Birim Değer])
+    FOR Tarih IN ('+@Aylar+')
+) AS EnvanterDegerleri_Pivot;'
+END
+EXEC (@SQL)
+--SELECT CONCAT(sto_kod,' - ',sto_isim) AS [Stok],CONCAT(AyAdi,'-',YEAR(EnvanterTarihi)) FROM MCM_STOK_ENVANTER_DATA WITH(NOLOCK) LEFT JOIN MikroDB_V16_MCM.dbo.STOKLAR WITH(NOLOCK) ON sto_kod=StokKodu LEFT JOIN [dbo].[vw_XP_Aylar] ON ID=month(EnvanterTarihi) WHERE Firma=0
